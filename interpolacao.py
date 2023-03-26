@@ -31,4 +31,21 @@ img_escala_de_cinza.save('./img/imagem_tons_cinza.jpeg')
 # transforma a imagem em matriz
 data = image.imread('./img/imagem_tons_cinza.jpeg')
 print("Imagem -> Matriz")
-print(data)
+
+imagem = data
+
+n_linhas = len(imagem)     # procura o número de linhas 
+n_colunas = len(imagem[0])  # procura o número de coluna
+matriz = [[]] # cria uma matriz com uma linha
+for i in range(0, n_linhas):
+    linha = []
+    for j in range(0, n_colunas):
+        if(i == j):
+            print("Entrou aquii 3")
+            linha.append(imagem[i][j])
+    matriz[i] = linha
+img = pyplot.imshow(matriz, aspect='auto')
+print("Entrou aquii 4")
+print(matriz)
+'''pyplot.axis("off")
+pyplot.show()'''
