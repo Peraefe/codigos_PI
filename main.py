@@ -24,18 +24,20 @@ def reduzir_vizinho(imagem):
     largura=len(imagem[0])  # procura o número de coluna
 
     resultado = [[]] # cria uma matriz com uma linha
-    nova_img= Image.new("L", (largura, altura))
+    # nova_img= Image.new("L", (largura, altura))
 
-    x=0
-    y=0
+    # x=0
+    # y=0
     for i in range(0, altura,2):
         for j in range(0,largura,2):
             resultado.append(imagem[i][j])
-            cor=imagem[i][j]
-            print("cor: ",cor,"\n")
-            nova_img.putpixel((x, y), cor)
-            y=y+1
-        x=x+1
+            # cor=imagem[i][j]
+            # print("cor: ",cor,"\n")
+            # nova_img.putpixel((x, y), cor)
+            # y=y+1
+        # x=x+1
+
+    nova_img = Image.fromarray(resultado)
 
     return nova_img
 
