@@ -31,7 +31,9 @@ def reduzir_vizinho(imagem):
     for i in range(0, altura,2):
         for j in range(0,largura,2):
             resultado.append(imagem[i][j])
-            nova_img.putpixel((x, y), resultado[i][j])
+            cor=imagem[i][j]
+            print("cor: ",cor,"\n")
+            nova_img.putpixel((x, y), cor)
             y=y+1
         x=x+1
 
