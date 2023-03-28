@@ -37,7 +37,9 @@ def reduzir_vizinho(imagem):
             # y=y+1
         # x=x+1
 
-    nova_img = Image.fromarray(resultado)
+    np_array= np.array(resultado)
+
+    nova_img = Image.fromarray(np_array)
 
     return nova_img
 
