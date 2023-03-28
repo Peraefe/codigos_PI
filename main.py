@@ -24,13 +24,18 @@ def reduzir_vizinho(imagem):
     largura=len(imagem[0])  # procura o número de coluna
 
     resultado = [[]] # cria uma matriz com uma linha
+    nova_img= Image.new("L", (largura, altura))
 
+    x=0
+    y=0
     for i in range(0, altura,2):
-        # linha=[]
         for j in range(0,largura,2):
             resultado.append(imagem[i][j])
+            nova_img.putpixel((x, y), resultado[i][j])
+            y=y+1
+        x=x+1
 
-    return resultado
+    return nova_img
 
 # def main():
 # Primeiramente transformar imagem colorida em tons de cinza
