@@ -23,23 +23,20 @@ def reduzir_vizinho(imagem):
     altura=len(imagem)     # procura o número de linhas
     largura=len(imagem[0])  # procura o número de coluna
 
-    resultado = [[]] # cria uma matriz com uma linha
-    # nova_img= Image.new("L", (largura, altura))
+    resultado = [[0 for i in range(0,altura,2)] for j in range(0,largura,2)] # cria uma matriz
 
-    # x=0
-    # y=0
+    x=0
+    y=0
     for i in range(0, altura,2):
         for j in range(0,largura,2):
-            resultado.append(imagem[i][j])
-            # cor=imagem[i][j]
-            # print("cor: ",cor,"\n")
-            # nova_img.putpixel((x, y), cor)
-            # y=y+1
-        # x=x+1
+            resultado[x][y]=imagem[i][j]
+            y=y+1
+        y=0
+        x=x+1
 
-    np_array= np.array(resultado)
+    np_array= np.array(resultado) # transforma o array em um numpy array
 
-    nova_img = Image.fromarray(np_array)
+    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
 
     return nova_img
 
@@ -72,23 +69,23 @@ if op == 1:
         # Amplia a imagem original com vizinho + proximo
         img_ampliada = ampliar_vizinho(imagem)
         # Salva a nova imagem ampliada
-        img_ampliada.save("./img/imagem_ampliada.png")
+        img_ampliada.save("./img/imagem_ampliada_vizinho.png")
     elif op2 == 2:
         # Amplia a imagem original com interpolação bilinear
         img_ampliada = ampliar_bilinear(imagem)
         # Salva a nova imagem reduzida
-        img_ampliada.save("./img/imagem_reduzida.png")
+        img_ampliada.save("./img/imagem_ampliada_bilinear.png")
 elif op == 2:
     if op2 == 1:
         # Reduz a imagem original com vizinho + proximo
         img_reduzida = reduzir_vizinho(imagem)
         # Salva a nova imagem ampliada
-        img_reduzida.save("./img/imagem_ampliada.png")
+        img_reduzida.save("./img/imagem_reduzida_vizinho.png")
     elif op2 == 2:
         # Reduz a imagem original com interpolação bilinear
         img_reduzida = reduzir_bilinear(imagem)
         # Salva a nova imagem reduzida
-        img_reduzida.save("./img/imagem_reduzida.png")
+        img_reduzida.save("./img/imagem_reduzida_bilinear.png")
 
 
 
