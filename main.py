@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 from matplotlib import image
 from matplotlib import pyplot
+import math
 """
 Para baixar as bibliotecas basta colocar o seguinte código no terminal python do VsCode:
 pip install numpy
@@ -29,14 +30,14 @@ def reduzir_vizinho(imagem):
     y=0
     for i in range(0, altura,2):
         for j in range(0,largura,2):
-            resultado[x][y]=imagem[i][j] # redução por vizinho
+            resultado[x][y]=imagem[i][j]
             y=y+1
         y=0
         x=x+1
 
     np_array= np.array(resultado) # transforma o array em um numpy array
 
-    nova_img = Image.fromarray(np_array,"L") # transforma o numpy array em uma imagem
+    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
 
     return nova_img
 
@@ -61,6 +62,58 @@ def reduzir_bilinear(imagem):
 
     return nova_img
 
+def ampliar_vizinho(imagem):
+    altura = len(imagem)    # procura por número de linhas
+    largura = len(imagem[0])    # procura por número de colunas
+    resultado = [[0 for i in range(0,(altura + math.ceil(altura/2)))] for j in range(0,(largura + math.ceil(largura/2)))] # cria uma matriz
+    x=0
+    y=0
+    for i in range(0, altura,2):
+        for j in range(0,largura,2):
+            for k in range(x, x+2):
+                for l in range(y, y+2):
+                    resultado[k][l]=imagem[i][j]
+        y=0
+        x=x+1
+    np_array= np.array(resultado) # transforma o array em um numpy array
+
+    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+
+    return nova_img
+
+def ampliar_bilinear(imagem):
+    altura = len(imagem)    # procura por número de linhas
+    largura = len(imagem[0])    # procura por número de colunas
+    resultado = [[0 for i in range(0,(altura + math.ceil(altura/2)))] for j in range(0,(largura + math.ceil(largura/2)))] # cria uma matriz
+    x=0
+    y=0
+    for i in range(0, altura,2):
+        for j in range(0,largura,2):
+            num1 = imagem[i][j]
+            num2 = imagem[i][j+1]
+            num3 = imagem[i+1][j]
+            num4 = imagem[i+1][j+1]
+            a = int(round((num1 + num2) / 2))
+            e = int(round((num3 + num4) / 2))
+            b = int(round((num1 + num3) / 2))
+            d = int(round((num2 + num4) / 2))
+            c = int(round(((num1 + num2) + (num3 + num4)) / 4))
+            resultado[x][y] = num1
+            resultado[x][y+1] = a
+            resultado[x][y+2] = num2
+            resultado[x+1][y] = b
+            resultado[x+1][y+1] = c
+            resultado[x+1][y+2] = d
+            resultado[x+2][y] = num3
+            resultado[x+2][y+1] = e
+            resultado[x+2][y+2] = num4
+        y=0
+        x=x+1
+    np_array= np.array(resultado) # transforma o array em um numpy array
+
+    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+
+    return nova_img
 # def main():
 # Primeiramente transformar imagem colorida em tons de cinza
 # abre a imagem colorida
@@ -94,24 +147,16 @@ if op == 1:
     elif op2 == 2:
         # Amplia a imagem original com interpolação bilinear
         img_ampliada = ampliar_bilinear(imagem)
-        # Salva a nova imagem ampliada
+        # Salva a nova imagem reduzida
         img_ampliada.save("./img/imagem_ampliada_bilinear.png")
 elif op == 2:
     if op2 == 1:
         # Reduz a imagem original com vizinho + proximo
         img_reduzida = reduzir_vizinho(imagem)
-        # Salva a nova imagem reduzida
-        # img_reduzida.save("./img/imagem_reduzida_vizinho.png")
-        # Mostra a nova imagem reduzida
-        img_reduzida.show()
+        # Salva a nova imagem ampliada
+        img_reduzida.save("./img/imagem_reduzida_vizinho.png")
     elif op2 == 2:
         # Reduz a imagem original com interpolação bilinear
         img_reduzida = reduzir_bilinear(imagem)
         # Salva a nova imagem reduzida
         img_reduzida.save("./img/imagem_reduzida_bilinear.png")
-
-
-
-    
-    
-
