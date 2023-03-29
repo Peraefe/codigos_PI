@@ -29,14 +29,35 @@ def reduzir_vizinho(imagem):
     y=0
     for i in range(0, altura,2):
         for j in range(0,largura,2):
-            resultado[x][y]=imagem[i][j]
+            resultado[x][y]=imagem[i][j] # redução por vizinho
             y=y+1
         y=0
         x=x+1
 
     np_array= np.array(resultado) # transforma o array em um numpy array
 
-    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+    nova_img = Image.fromarray(np_array,"L") # transforma o numpy array em uma imagem
+
+    return nova_img
+
+def reduzir_bilinear(imagem):
+    altura=len(imagem)     # procura o número de linhas
+    largura=len(imagem[0])  # procura o número de coluna
+
+    resultado = [[0 for i in range(0,altura,2)] for j in range(0,largura,2)] # cria uma matriz
+
+    x=0
+    y=0
+    for i in range(0, altura,2):
+        for j in range(0,largura,2):
+            resultado[x][y]=round((((imagem[i][j])+(imagem[(i+1)][j])+(imagem[i][(j+1)])+(imagem[(i+1)][(j+1)]))/4),2) # redução bilinear
+            y=y+1
+        y=0
+        x=x+1
+
+    np_array= np.array(resultado) # transforma o array em um numpy array
+
+    nova_img = Image.fromarray(np_array,"L") # transforma o numpy array em uma imagem
 
     return nova_img
 
@@ -58,10 +79,10 @@ print("Imagem -> Matriz")
 imagem = data
 
  # pega a opção que o cliente quer fazer com a imagem
-op = int(input("O que deseja fazer com a sua imagem? 1-Ampliar 2-Redizir"))
+op = int(input("O que deseja fazer com a sua imagem? 1-Ampliar 2-Reduzir \n"))
 
  # pega o tipo de interpolação que o cliente deseja
-op2 = int(input("1-Imterpolação por vizinho mais próximo 2-Interpolação bilinear"))
+op2 = int(input("1-Imterpolação por vizinho mais próximo 2-Interpolação bilinear \n"))
 
  # esrutura condicional que define a função para ser executada de acordo com as opções do cliente
 if op == 1:
@@ -73,14 +94,16 @@ if op == 1:
     elif op2 == 2:
         # Amplia a imagem original com interpolação bilinear
         img_ampliada = ampliar_bilinear(imagem)
-        # Salva a nova imagem reduzida
+        # Salva a nova imagem ampliada
         img_ampliada.save("./img/imagem_ampliada_bilinear.png")
 elif op == 2:
     if op2 == 1:
         # Reduz a imagem original com vizinho + proximo
         img_reduzida = reduzir_vizinho(imagem)
-        # Salva a nova imagem ampliada
-        img_reduzida.save("./img/imagem_reduzida_vizinho.png")
+        # Salva a nova imagem reduzida
+        # img_reduzida.save("./img/imagem_reduzida_vizinho.png")
+        # Mostra a nova imagem reduzida
+        img_reduzida.show()
     elif op2 == 2:
         # Reduz a imagem original com interpolação bilinear
         img_reduzida = reduzir_bilinear(imagem)
