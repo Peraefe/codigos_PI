@@ -72,16 +72,24 @@ def reduzir_bilinear(imagem):
 def ampliar_vizinho(imagem):
     altura = len(imagem)    # procura por número de linhas
     largura = len(imagem[0])    # procura por número de colunas
-    resultado = [[0 for i in range(0,(altura + math.ceil(altura/2)))] for j in range(0,(largura + math.ceil(largura/2)))] # cria uma matriz
+    resultado = [[0 for i in range(0,((2*altura)-1))] for j in range(0,((2*largura)-1))] # cria uma matriz
+
     x=0
     y=0
-    for i in range(0, altura,2):
-        for j in range(0,largura,2):
-            for k in range(x, x+2):
-                for l in range(y, y+2):
-                    resultado[k][l]=imagem[i][j]
+    for i in range(0, len(resultado),2):
+        for j in range(0,len(resultado[0]),2):
+            resultado[i][j]=imagem[x][y]
+            if(j!=(len(resultado[0])-1) and i!=(len(resultado)-1)):
+                resultado[i][j+1]=resultado[i][j]
+                resultado[i+1][j]=resultado[i][j]
+                resultado[i+1][j+1]=resultado[i][j]
+                resultado[i+1][j+2]=resultado[i][j+2]
+                resultado[i+2][j+1]=resultado[i+2][j]
+            y=y+1
         y=0
         x=x+1
+
+   
     np_array= np.array(resultado) # transforma o array em um numpy array
 
     nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
@@ -151,7 +159,8 @@ if op == 1:
         # Amplia a imagem original com vizinho + proximo
         img_ampliada = ampliar_vizinho(imagem)
         # Salva a nova imagem ampliada
-        img_ampliada.save("./img/imagem_ampliada_vizinho.png")
+        #img_ampliada.save("./img/imagem_ampliada_vizinho.png")
+        img_ampliada.show()
     elif op2 == 2:
         # Amplia a imagem original com interpolação bilinear
         img_ampliada = ampliar_bilinear(imagem)
