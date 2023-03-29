@@ -41,6 +41,7 @@ def reduzir_vizinho(imagem):
 
     return nova_img
 
+
 def reduzir_bilinear(imagem):
     altura=len(imagem)     # procura o número de linhas
     largura=len(imagem[0])  # procura o número de coluna
@@ -138,6 +139,7 @@ print("Imagem -> Matriz")
 imagem = data
 
  # pega a opção que o cliente quer fazer com a imagem
+
 op = int(input("O que deseja fazer com a sua imagem? 1-Ampliar 2-Reduzir \n"))
 
  # pega o tipo de interpolação que o cliente deseja
