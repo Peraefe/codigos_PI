@@ -146,39 +146,6 @@ def ampliar_bilinear(imagem):
 
     return nova_img
 
-def ampliar_bilinear_teste(imagem):
-    altura = len(imagem)    # procura por número de linhas
-    largura = len(imagem[0])    # procura por número de colunas
-    resultado = [[0 for i in range(0,(altura + math.ceil(altura/2)))] for j in range(0,(largura + math.ceil(largura/2)))] # cria uma matriz
-    x=0
-    y=0
-    for i in range(0, altura,2):
-        for j in range(0,largura,2):
-            num1 = imagem[i][j]
-            num2 = imagem[i][j+1]
-            num3 = imagem[i+1][j]
-            num4 = imagem[i+1][j+1]
-            a = int(round((num1 + num2) / 2))
-            e = int(round((num3 + num4) / 2))
-            b = int(round((num1 + num3) / 2))
-            d = int(round((num2 + num4) / 2))
-            c = int(round(((num1 + num2) + (num3 + num4)) / 4))
-            resultado[x][y] = num1
-            resultado[x][y+1] = a
-            resultado[x][y+2] = num2
-            resultado[x+1][y] = b
-            resultado[x+1][y+1] = c
-            resultado[x+1][y+2] = d
-            resultado[x+2][y] = num3
-            resultado[x+2][y+1] = e
-            resultado[x+2][y+2] = num4
-        y=0
-        x=x+1
-    np_array= np.array(resultado) # transforma o array em um numpy array
-
-    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
-
-    return nova_img
 # def main():
 # Primeiramente transformar imagem colorida em tons de cinza
 # abre a imagem colorida
