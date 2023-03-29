@@ -37,7 +37,7 @@ def reduzir_vizinho(imagem):
 
     np_array= np.array(resultado) # transforma o array em um numpy array
 
-    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+    nova_img = Image.fromarray(np_array,"L") # transforma o numpy array em uma imagem
 
     return nova_img
 
@@ -51,14 +51,20 @@ def reduzir_bilinear(imagem):
     y=0
     for i in range(0, altura,2):
         for j in range(0,largura,2):
-            resultado[x][y]=round((((imagem[i][j])+(imagem[(i+1)][j])+(imagem[i][(j+1)])+(imagem[(i+1)][(j+1)]))/4),2) # redução bilinear
+            media=0
+            num1=imagem[i][j]
+            num2=(imagem[(i+1)][j])
+            num3=imagem[i][(j+1)]
+            num4=(imagem[(i+1)][(j+1)])
+            media=((num1/4)+(num2/4)+(num3/4)+(num4/4))
+            resultado[x][y]=media
             y=y+1
         y=0
         x=x+1
 
     np_array= np.array(resultado) # transforma o array em um numpy array
 
-    nova_img = Image.fromarray(np_array,"L") # transforma o numpy array em uma imagem
+    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
 
     return nova_img
 
@@ -154,9 +160,11 @@ elif op == 2:
         # Reduz a imagem original com vizinho + proximo
         img_reduzida = reduzir_vizinho(imagem)
         # Salva a nova imagem ampliada
-        img_reduzida.save("./img/imagem_reduzida_vizinho.png")
+        #img_reduzida.save("./img/imagem_reduzida_vizinho.png")
+        img_reduzida.show()
     elif op2 == 2:
         # Reduz a imagem original com interpolação bilinear
         img_reduzida = reduzir_bilinear(imagem)
         # Salva a nova imagem reduzida
-        img_reduzida.save("./img/imagem_reduzida_bilinear.png")
+        #img_reduzida.save("./img/imagem_reduzida_bilinear.png")
+        img_reduzida.show()
