@@ -168,9 +168,9 @@ imagem = data
 op = int(input("O que deseja fazer com a sua imagem? 1-Ampliar 2-Reduzir \n"))
 
  # pega o tipo de interpolação que o cliente deseja
-op2 = int(input("1-Imterpolação por vizinho mais próximo 2-Interpolação bilinear \n"))
+op2 = int(input("1-Interpolação por vizinho mais próximo 2-Interpolação bilinear \n"))
 
- # esrutura condicional que define a função para ser executada de acordo com as opções do cliente
+ # estrutura condicional que define a função para ser executada de acordo com as opções do cliente
 if op == 1:
     if op2 == 1:
         # Amplia a imagem original com vizinho + proximo
