@@ -22,7 +22,7 @@ pip install matplotlib
 def imgbinaria(imagem):
     altura = len(imagem)    # procura por número de linhas
     largura = len(imagem[0])    # procura por número de colunas
-    resultado = [[0 for i in range(0,altura)] for j in range(0,altura)] # cria uma imagem
+    resultado = [[0 for i in range(0,altura)] for j in range(0,altura)] # cria uma matriz
 
     
     for i in range(0, len(resultado)):
@@ -31,10 +31,12 @@ def imgbinaria(imagem):
 
     for i in range(altura):
         for j in range(largura):
-            if resultado[i][j]<255:
+
+            
+            if resultado[i][j]<230:
                 resultado[i][j]=0
             else:
-                resultado[i][j]=1
+                resultado[i][j]=255
 
     nova_img=resultado
 
@@ -90,7 +92,7 @@ def rotular(imagem):
             RotulaVizinhanca(imagem, i, j, rotulo)
 
             if (rotulo > 2):
-                  rotulo-=1
+                rotulo-=1
             else:
                 print("Sua figura tem mais que 255 componentes conexas!\n");
                 break;
@@ -106,15 +108,15 @@ def rotular(imagem):
 #def main():
 # Primeiramente transformar imagem colorida em tons de cinza
 # abre a imagem colorida
-imagem = Image.open('atividades\img\imagem_colorida.jpg')
+imagem = Image.open('atividades/img/imagem_colorida.jpg')
 # converte a imagem para o modo L (escala de cinza)
 img_escala_de_cinza = imagem.convert('L')
 
 # salva a nova imagem
-img_escala_de_cinza.save('atividades\img\imagem_tons_cinza.jpg')
+img_escala_de_cinza.save('atividades/img/imagem_tons_cinza.jpg')
 
 # transforma a imagem em imagem
-data = image.imread('atividades\img\imagem_tons_cinza.jpg')
+data = image.imread('atividades/img/imagem_tons_cinza.jpg')
 #data = np.array('./img/imagem_tons_cinza.jpg')
 print("Imagem -> imagem")
 
@@ -123,10 +125,18 @@ imagem = data
 #transforma a imagem em binária
 imagem=imgbinaria(imagem)
 
+np_array= np.array(imagem) # transforma o array em um numpy array
+
+nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+
+nova_img.show()
+
+nova_img.save('atividades\img\imagem_binaria.jpg')
+
 # transforma a imagem em imagem
 
 img_rotulada = rotular(imagem)
-img_rotulada.show()
+#img_rotulada.show()
 # Salva a nova imagem rotulada
 #img_rotulada.save("./img/imagem_rotulada.png")
 #np_array= np.array(img_rotulada) # transforma o array em um numpy array

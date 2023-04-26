@@ -1,139 +1,95 @@
-"""
-Universidade Federal do Tocantins - Campus Palmas
-Discilina: Processamento de Imagens
-Professora: Glenda Botelho
-Alunas: Fernanda Plessim e Larissa Hirai
-Curso: Ciêmcias da Computação
-"""
-# Atividade 1
-# Biblioteca numpy está sendo importada
+# Bibliotecas necessárias
 import numpy as np
-# Bibliotecas PIL e matplotlib sendo importadas
 from PIL import Image
 from matplotlib import image
 from matplotlib import pyplot
-import math
-"""
-Para baixar as bibliotecas basta colocar o seguinte código no terminal python do VsCode:
-pip install numpy
-pip install matplotlib
-(Com esse comando a biblioteca PIL vai ser instalada no mesmo pacote)
-"""
+
+# Função para transformar uma imagem em tons de cinza em uma imagem binária
 def imgbinaria(imagem):
-    altura = len(imagem)    # procura por número de linhas
-    largura = len(imagem[0])    # procura por número de colunas
-    resultado = [[0 for i in range(0,altura)] for j in range(0,altura)] # cria uma matriz
-
+    # Obtém as dimensões da imagem
+    altura, largura = imagem.shape
     
-    for i in range(0, len(resultado)):
-        for j in range(0,len(resultado[0])):
-            resultado[i][j]=imagem[i][j]
-
+    # Cria uma nova matriz para a imagem binária
+    resultado = np.zeros((altura, largura), dtype=np.uint8)
+    
+    # Converte a imagem para binária
     for i in range(altura):
         for j in range(largura):
-            if resultado[i][j]<255:
-                resultado[i][j]=0
+            if imagem[i][j] < 230:
+                resultado[i][j] = 0
             else:
-                resultado[i][j]=255
-
-    nova_img=resultado
-
+                resultado[i][j] = 255
     
-    return nova_img
+    return resultado
 
+# Função para rotular os objetos presentes em uma imagem binária
 
-def rotular(imagem):
-    altura = len(imagem)    # procura por número de linhas
-    largura = len(imagem[0])    # procura por número de colunas
-    labels = [[0 for j in range(largura)] for i in range(altura)] # cria uma matriz
-    equi=[]
-
-    label_count = []
-    for i in range(altura):
-        for j in range(largura):
-            if imagem[i][j] == 0: # Pixel preto
-                if i==0 and j==0:
-                    print("aqui1")
-                    labels[i][j]=len(label_count)*1
-                    label_count.append(labels[i][j])
+def rotular(imagem_binaria):
+    # Define uma função para encontrar os vizinhos de um pixel dado
+    def get_vizinhos(pixel, shape):
+        vizinhos = []
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if i == 0 and j == 0:
+                    continue
+                x = pixel[0] + i
+                y = pixel[1] + j
+                if x >= 0 and x < shape[0] and y >= 0 and y < shape[1]:
+                    vizinhos.append((x, y))
+        return vizinhos
+    
+    # Cria uma matriz para armazenar os rótulos
+    labels = np.zeros(imagem_binaria.shape, dtype=np.uint32)
+    
+    # Define uma lista de equivalências de rótulos
+    equivalencias = []
+    
+    # Define um rótulo inicial
+    proximo_rotulo = 1
+    
+    # Percorre a imagem binária
+    for i in range(imagem_binaria.shape[0]):
+        for j in range(imagem_binaria.shape[1]):
+            # Se o pixel atual for branco, pula para o próximo
+            if imagem_binaria[i,j] == 255:
+                continue
+            
+            # Obtém os vizinhos do pixel atual
+            vizinhos = get_vizinhos((i,j), imagem_binaria.shape)
+            
+            # Cria uma lista de rótulos dos vizinhos conectados
+            rotulos_vizinhos = [labels[x,y] for (x,y) in vizinhos if imagem_binaria[x,y] == 0 and labels[x,y] != 0]
+            
+            # Se nenhum vizinho conectado tiver um rótulo, atribui um novo rótulo
+            if not rotulos_vizinhos:
+                labels[i,j] = proximo_rotulo
+                proximo_rotulo += 15
+            
+            # Se houver apenas um rótulo entre os vizinhos conectados, atribui esse rótulo
+            elif len(rotulos_vizinhos) == 1:
+                labels[i,j] = rotulos_vizinhos[0]
+            
+            # Se houver mais de um rótulo entre os vizinhos conectados, faz a união dos rótulos
+            else:
+                minimo = min(rotulos_vizinhos)
+                maximo = max(rotulos_vizinhos)
+                labels[i,j] = minimo
+                for e in equivalencias:
+                    if maximo in e:
+                        e.add(minimo)
+                        break
                 else:
-                    if i==0 and imagem[i][j-1]==0:
-                        labels[i][j]=imagem[i][j-1]
-                    else:
-                        if j==0 and imagem[i-1][j]==0:
-                            labels[i][j]=labels[i-1][j]
-                        else:
-                            if j==0 or i==0:
-                                labels[i][j]=len(label_count)*1
-                                label_count.append(labels[i][j])
-                if i > 0 and j>0:
-                    if imagem[i-1][j]==255 and imagem[i][j-1]==255:
-                            labels[i][j]=len(label_count)*1
-                            label_count.append(labels[i][j])
-                    elif imagem[i-1][j]==0 and imagem[i][j-1]==0:
-                            labels[i][j] = labels[i][j-1]
-                            aux=[labels[i-1][j],labels[i][j-1]]
-                            equi.append(aux)
-                    else:
-                        if imagem[i-1][j]==0:
-                            labels[i][j]=labels[i-1][j]
-                        else:
-                            labels[i][j]=labels[i][j-1]
+                    equivalencias.append({minimo, maximo})
     
-
-    new_equi = []
-    for elem in equi:
-        if elem not in new_equi:
-            if elem[0]!=elem[1]:
-                new_equi.append(elem)
-    equi = new_equi
-    diff=0
+    # Resolve as equivalências de rótulos
+    for e in equivalencias:
+        rotulo = min(e)
+        for r in e:
+            if r != rotulo:
+                labels[labels == r] = rotulo
     
-    while diff!=equi:
-        equi = new_equi
-        diff=equi 
+    return labels
 
-        for elem in new_equi:
-            for i in range(altura):
-                for j in range(largura):
-                    if labels[i][j]==elem[1]:
-                        labels[i][j]=elem[0]
-            elem[0]=elem[1]
-        
-        new_equi = []
-        for elem in equi:
-            if elem not in new_equi:
-                if elem[0]!=elem[1]:
-                    new_equi.append(elem)
-
-        for elem in equi:
-            for elem2 in equi:
-                if elem[0]==elem2[0]:
-                    
-                if elem[0]==elem2[1]:
-
-    
-
-        diff=new_equi
-        print("aqui, equi e diff:",len(equi),len(diff))
-
-    new_count=[]   
-    for i in labels:
-        for j in i:
-            if j not in new_count:
-                new_count.append(j)
-
-    print(len(new_count))
-
-    print(label_count)
-
-
-
-    np_array= np.array(labels) # transforma o array em um numpy array
-
-    nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
-
-    return nova_img
 
 #def main():
 # Primeiramente transformar imagem colorida em tons de cinza
@@ -154,14 +110,14 @@ imagem = data
 
 #transforma a imagem em binária
 imagem=imgbinaria(imagem)
-
-# transforma a imagem em matriz
+#np_array= np.array(imagem) # transforma o array em um numpy array
+#imagem = Image.fromarray(np_array)
+#imagem.show()
 
 img_rotulada = rotular(imagem)
-img_rotulada.show()
-# Salva a nova imagem rotulada
-#img_rotulada.save("./img/imagem_rotulada.png")
-#np_array= np.array(img_rotulada) # transforma o array em um numpy array
-#nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
-#nova_img.show()
-#img_rotulada.show()
+
+np_array= np.array(img_rotulada) # transforma o array em um numpy array
+
+nova_img = Image.fromarray(np_array) # transforma o numpy array em uma imagem
+
+nova_img.show()
