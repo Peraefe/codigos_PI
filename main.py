@@ -42,7 +42,7 @@ def equalizar(imagem):
     for k in range(0,255):
         histograma[2][k]=((histograma[1][k])*(1/pixels))
     
-        for k in range(0,255):
+    for k in range(0,255):
         if k==0:
             histograma[3][k]=histograma[2][k] # preenche o histograma em Freq
             histograma[4][k]=(histograma[3][k])*255 # preenche o histograma em EQ
