@@ -20,6 +20,7 @@ pip install matplotlib
 (Com esse comando a biblioteca PIL vai ser instalada no mesmo pacote)
 """
 
+
 def equalizar(imagem):
     altura=len(imagem)     # procura o número de linhas
     largura=len(imagem[0])  # procura o número de coluna
