@@ -68,16 +68,16 @@ def equalizar(imagem):
 # def main():
 # Primeiramente transformar imagem colorida em tons de cinza
 # abre a imagem colorida
-imagem = Image.open('atividades\img\imagem_colorida.jpeg')
+imagem = Image.open('img\imagem_colorida.jpeg')
 
  # converte a imagem para o modo L (escala de cinza)
 img_escala_de_cinza = imagem.convert('L')
 
  # salva a nova imagem
-img_escala_de_cinza.save('atividades\img\imagem_tons_cinza.jpeg')
+img_escala_de_cinza.save('img\imagem_tons_cinza.jpeg')
 
  # transforma a imagem em matriz
-data = image.imread('atividades\img\imagem_tons_cinza.jpeg')
+data = image.imread('img\imagem_tons_cinza.jpeg')
 print("Imagem -> Matriz")
 
 imagem = data
