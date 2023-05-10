@@ -70,34 +70,34 @@ def laplaciano(imagem):
     normalizado3 = normalizar(subtrair3, 0, 255)
     normalizado4 = normalizar(subtrair4, 0, 255)
 
-    Image.fromarray(normalizado1.astype(np.uint8)).save('imagem_agucada1.png')
-    Image.fromarray(normalizado2.astype(np.uint8)).save('imagem_agucada2.png')
-    Image.fromarray(normalizado3.astype(np.uint8)).save('imagem_agucada3.png')
-    Image.fromarray(normalizado4.astype(np.uint8)).save('imagem_agucada4.png')
+    Image.fromarray(normalizado1.astype(np.uint8)).save('./img/imagem_agucada1_laplacian.png')
+    Image.fromarray(normalizado2.astype(np.uint8)).save('./img/imagem_agucada2.png')
+    Image.fromarray(normalizado3.astype(np.uint8)).save('./img/imagem_agucada3.png')
+    Image.fromarray(normalizado4.astype(np.uint8)).save('./img/imagem_agucada4.png')
 
 def sobel(imagem):
     # Criação das máscaras de Sobel
-    sobel_x = np.array([[-1, 0, 1],
-                        [-2, 0, 2],
-                        [-1, 0, 1]])
+    sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
 
-    sobel_y = np.array([[-1, -2, -1],
-                        [0, 0, 0],
-                        [1, 2, 1]])
+    sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
 
-    # Aplicação das máscaras de Sobel
-    grad_x = np.abs(np.convolve(imagem, sobel_x, mode='same'))
-    grad_y = np.abs(np.convolve(imagem, sobel_y, mode='same'))
+    altura, largura = imagem.shape
+    resultado = np.zeros((altura, largura), dtype=np.float32)
+    result = np.zeros((altura, largura), dtype=np.float32)
 
-    # Cálculo da magnitude do gradiente
-    grad_mag = np.sqrt(grad_x**2 + grad_y**2)
+    imagem = np.array(imagem, dtype=np.float32)
 
-    # Normalização da magnitude do gradiente
-    grad_mag = (grad_mag / np.max(grad_mag)) * 255
+    for i in range(1, altura - 1):
+        for j in range(1, largura - 1):
+            result[i, j] = np.sum(sobel_x * imagem[i-1:i+2, j-1:j+2])
+    
+    for i in range(1, altura - 1):
+        for j in range(1, largura - 1):
+            resultado[i, j] = np.sum(sobel_y * result[i-1:i+2, j-1:j+2])
 
-    # Mostrar a imagem resultante com as bordas detectadas
-    pyplot.imshow(grad_mag, cmap='gray')
-    pyplot.show()
+    normalized_array = normalizar(resultado, 0, 255)
+
+    Image.fromarray(normalized_array.astype(np.uint8)).save('./img/imagem_agucada_sobel.png')
 
 op = 8
 
