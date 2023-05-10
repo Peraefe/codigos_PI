@@ -84,16 +84,20 @@ def sobel(imagem):
     sobel_y = np.array([[-1, -2, -1],
                         [0, 0, 0],
                         [1, 2, 1]])
-
+    
     # Aplicação das máscaras de Sobel
-    grad_x = np.abs(np.convolve(imagem, sobel_x, mode='same'))
-    grad_y = np.abs(np.convolve(imagem, sobel_y, mode='same'))
+    grad_x = np.abs(np.convolve(np.ravel(imagem), np.ravel(sobel_x), mode='same'))
+    grad_y = np.abs(np.convolve(np.ravel(imagem), np.ravel(sobel_y), mode='same'))
 
     # Cálculo da magnitude do gradiente
     grad_mag = np.sqrt(grad_x**2 + grad_y**2)
 
     # Normalização da magnitude do gradiente
     grad_mag = (grad_mag / np.max(grad_mag)) * 255
+
+    # Muda grad_mag para o formato esperado por pyplot.imshow
+    height, width = imagem.shape
+    grad_mag = grad_mag.reshape(height, width)
 
     # Mostrar a imagem resultante com as bordas detectadas
     pyplot.imshow(grad_mag, cmap='gray')
