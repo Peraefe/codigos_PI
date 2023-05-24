@@ -19,3 +19,4 @@ pip install numpy
 pip install matplotlib
 (Com esse comando a biblioteca PIL vai ser instalada no mesmo pacote)
 """
+
