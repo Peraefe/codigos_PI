@@ -79,6 +79,7 @@ def transformacao_top_hat(imagem, tamanho_mascara):
     return top_hat_imagem
 
 # Carrega a imagem em tons de cinza
+#imagem_cinza = Image.open('./img/imagem.jpg').convert('L')
 imagem_cinza = Image.open('./img/imagem_top_hat.jpg').convert('L')
 
 # Converte a imagem para um array numpy
