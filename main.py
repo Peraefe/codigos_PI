@@ -19,69 +19,61 @@ pip install numpy
 pip install matplotlib
 (Com esse comando a biblioteca PIL vai ser instalada no mesmo pacote)
 """
+import matplotlib.pyplot as plt
 
 def find_valley_threshold(image):
+    # Converter a imagem em um array numpy
+    image_array = np.array(image)
+
     # Obter o histograma da imagem
-    histogram = image.histogram()
+    histogram, bins = np.histogram(image_array.flatten(), bins=256, range=[0, 256])
+    #plt.figure(figsize=(10, 5))
+    #plt.bar(bins[:-1], histogram, width=1, color='gray')
+    #plt.title('Histograma')
+    #plt.xlabel('Intensidade')
+    #plt.ylabel('Frequência')
+    #plt.show()
 
-    # Encontrar o limiar inicial usando o método de Otsu
-    _, initial_threshold = image.convert("L").getextrema()
+    # Encontrar o centro do histograma
+    center = len(histogram) // 2
 
-    # Inicializar o limiar ótimo como o limiar inicial
-    optimal_threshold = initial_threshold
+    # Inicializar o índice do vale mais próximo ao centro
+    closest_valley_index = None
 
-    # Inicializar a medida de separabilidade mínima como um valor alto
-    min_separability = float('inf')
+    # Percorrer o histograma para encontrar o vale mais próximo ao centro
+    for i in range(center, len(histogram)):
+        if histogram[i] < histogram[i-1] and histogram[i] < histogram[i+1]:
+            closest_valley_index = i
+            break
 
-    # Percorrer o histograma para encontrar o limiar ótimo
-    for t in range(1, 255):
-        # Divide o histograma em dois grupos: pixels abaixo do limiar e pixels acima ou igual ao limiar
-        group1 = histogram[:t]
-        group2 = histogram[t:]
+    if closest_valley_index is None:
+        for i in range(center, 0, -1):
+            if histogram[i] < histogram[i-1] and histogram[i] < histogram[i+1]:
+                closest_valley_index = i
+                break
 
-        # Verificar se algum dos grupos está vazio
-        if np.sum(group1) == 0 or np.sum(group2) == 0:
-            continue
+    # Verificar se o vale mais próximo foi encontrado
+    if closest_valley_index is not None:
+        # Calcular o valor do limiar ótimo como o centro do vale mais próximo
+        optimal_threshold = (bins[closest_valley_index] + bins[closest_valley_index+1]) // 2
+    else:
+        # Caso não seja encontrado um vale, usar o limiar inicial como ótimo
+        _, optimal_threshold = image.getextrema()
 
-        # Calcule as probabilidades de cada grupo
-        w1 = np.sum(group1) / np.sum(histogram)
-        w2 = np.sum(group2) / np.sum(histogram)
-
-        # Calcule as médias de intensidade de cada grupo
-        mean1 = np.sum(np.multiply(np.arange(t), group1)) / np.sum(group1)
-        mean2 = np.sum(np.multiply(np.arange(t, 256), group2)) / np.sum(group2)
-
-        # Calcule a variância intra-classe de cada grupo
-        var1 = np.sum(np.multiply(np.square(np.subtract(np.arange(t), mean1)), group1)) / np.sum(group1)
-        var2 = np.sum(np.multiply(np.square(np.subtract(np.arange(t, 256), mean2)), group2)) / np.sum(group2)
-
-        # Calcule a medida de separabilidade entre os grupos
-        separability = w1 * w2 * np.square(mean1 - mean2) / (var1 + var2)
-
-        # Atualize o limiar ótimo se a medida de separabilidade for menor que a mínima encontrada até agora
-        if separability < min_separability:
-            min_separability = separability
-            optimal_threshold = t
-
+    #print(optimal_threshold)
     return optimal_threshold
 
 # Carregar a imagem
-image = Image.open('./img/imagem.jpg')  
+image = Image.open('img/imagem.jpg')
 
 # Converter a imagem para escala de cinza
 image_gray = image.convert("L")
 
-# Converter a imagem em um array numpy
-image_array = np.array(image_gray)
-
 # Encontrar o limiar ótimo usando o método do vale
 threshold = find_valley_threshold(image_gray)
 
-# Segmentar a imagem com base no limiar ótimo
-image_binary = np.where(image_array > threshold, 255, 0)
-
-# Criar uma imagem PIL a partir do array binário
-image_segmented = Image.fromarray(image_binary.astype(np.uint8))
+# Aplicar o limiar à imagem
+image_binary = image_gray.point(lambda pixel: 255 if pixel > threshold else 0, mode='L')
 
 # Exibir a imagem segmentada
 pyplot.figure(figsize=(8, 4))
@@ -92,4 +84,3 @@ pyplot.subplot(1, 2, 2)
 pyplot.imshow(image_binary, cmap='gray')
 pyplot.title('Imagem Segmentada')
 pyplot.show()
-
